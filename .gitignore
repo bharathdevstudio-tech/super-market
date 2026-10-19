@@ -1,0 +1,48 @@
+# ---------------------------------------------------------------------
+#  Visual Studio 2010 / VB.NET legacy project - Git ignore rules
+#  Keeps build output, IDE state and local backups out of the repository.
+#  The application source (.vb, .resx, .vbproj, .sln, .xsd, .sql) is NOT
+#  ignored and is fully preserved.
+# ---------------------------------------------------------------------
+
+# ---- Build output ---------------------------------------------------
+[Bb]in/
+[Oo]bj/
+
+# ---- Visual Studio IDE / user state ---------------------------------
+*.suo
+*.user
+*.vbproj.user
+*.csproj.user
+*.userosscache
+*.sln.docstates
+.vs/
+
+# ---- Local source backups -------------------------------------------
+#  (e.g. FrmMDICommon.vb.bak, Windows Application.vbproj.bak)
+*.bak
+
+# ---- ReSharper / other tool caches ----------------------------------
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# ---- Temporary files -------------------------------------------------
+*.tmp
+*.temp
+~*.*
+
+# ---- Windows shell junk ---------------------------------------------
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# ---- Logs ------------------------------------------------------------
+*.log
+
+# ---- Local secret notes (NEVER commit) -------------------------------
+#  Holds the real values that were replaced with placeholders in the
+#  source before publishing.  See LOCAL_SECRETS.txt.
+LOCAL_SECRETS*
+*.local.txt
