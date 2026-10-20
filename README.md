@@ -82,23 +82,43 @@ Remove or replace those URLs if you do not want the application to use them.
 ## Semi-online sync
 
 The app keeps working offline on SQL Server, and can push its data to a hosted
-MySQL/PHP server for owner reports. Open **ONLINE → Online Sync**.
+backend for owner reports. Open **ONLINE → Online Sync**.
 
 | Direction | Purpose |
 |---|---|
 | SQL Server → Hostinger | push local data to the server (default) |
 | Hostinger → SQL Server | pull server data back into SQL Server |
 
-Two directions exist for the other verticals as well (`VHostingSync.vb`); the
-supermarket profile uses:
+The backend is **free**: a Google Apps Script web app storing the data in a
+Google Sheet. No server, no database fee, no credit card.
+
+### One-time setup (about 5 minutes)
+
+1. Create a blank spreadsheet at <https://sheets.google.com>
+   (for example `SuperMarket Sync`).
+2. In that sheet: **Extensions → Apps Script**.
+3. Delete the sample code and paste `Server\GoogleAppsScript\Code.gs`.
+4. **Deploy → New deployment → Web app**
+   - Execute as: `Me`
+   - Who has access: `Anyone` (the desktop app has no Google login)
+5. Copy the `/exec` URL and paste it into `SM_SYNC_API` in
+   `Windows Application\Others\VHostingSync.vb`, then rebuild.
+
+One URL serves both directions — the `action` parameter decides what happens:
 
 ```
-push  https://vistawin.store/super-market/vbtoserver-insert/insert_api.php
-pull  https://vistawin.store/super-market/servertovb-recieve/api_data.php
+GET  ?action=tables               -> list of synced tables
+GET  ?action=data&table=tbl_X     -> rows of one table
+POST ?action=clear&table=tbl_X    -> empty the remote copy
+POST ?action=insert&table=tbl_X   -> insert the pushed rows
 ```
 
-Change the two `SM_PUSH_API` / `SM_PULL_API` constants in
-`Windows Application\Others\VHostingSync.vb` to point at your own server.
+Because the URL is public, anybody who has it could overwrite the sheets. The
+sheets are only a copy — the shop's SQL Server stays the source of truth — but
+`SHARED_TOKEN` in `Code.gs` lets you lock it down later.
+
+If you would rather run your own PHP/MySQL server, keep `SM_SYNC_API` pointing
+at it: any backend that implements the four actions above works unchanged.
 
 **Tables pushed:** `tbl_BillSeries`, `tbl_Brand`, `tbl_Category`,
 `tbl_CusProfile`, `tbl_MultiStock`, `tbl_PurchDetail`, `tbl_PurchParticular`,

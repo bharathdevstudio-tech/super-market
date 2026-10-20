@@ -24,9 +24,16 @@ Public Module VHostingSync
     Private Const SBE_PUSH_API As String = "https://vistawin.store/Inven-sbe/vbtoserver-insert/insert_api.php"
     Private Const SBE_PULL_API As String = "https://vistawin.store/Inven-sbe/servertovb-recieve/api_data.php"
 
-    ' SuperMarket vertical (semi-online): local SQL Server <-> hosted MySQL.
-    Private Const SM_PUSH_API As String = "https://vistawin.store/super-market/vbtoserver-insert/insert_api.php"
-    Private Const SM_PULL_API As String = "https://vistawin.store/super-market/servertovb-recieve/api_data.php"
+    ' SuperMarket vertical (semi-online): local SQL Server <-> free backend.
+    ' Deploy Server\GoogleAppsScript\Code.gs (Google Apps Script + Google
+    ' Sheets - no hosting fee, no database fee) and paste its /exec URL
+    ' below.  Push and pull share one URL; the "action" parameter decides
+    ' what happens.  Any server that implements the same four actions
+    ' (tables / data / clear / insert) also works - for example the PHP API
+    ' used by the other verticals.
+    Private Const SM_SYNC_API As String = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec"
+    Private Const SM_PUSH_API As String = SM_SYNC_API
+    Private Const SM_PULL_API As String = SM_SYNC_API
 
     Private Const HTTP_TIMEOUT As Integer = 30000
 
