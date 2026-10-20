@@ -40,6 +40,12 @@ Public Class FrmHostingSync
 
         If _startMode = HostingSyncMode.VBToServer Then
             cboMode.SelectedIndex = 1
+        ElseIf String.Equals(Convert.ToString(VistawinFunctions.CmpDatabaseName),
+                             "SuperMarketDB", StringComparison.OrdinalIgnoreCase) Then
+            ' Semi-online supermarket: the shop pushes to the hosting server.
+            ' Defaulting to this direction means the screen opens on the local
+            ' table list, so it works before the server side is deployed.
+            cboMode.SelectedIndex = 1
         Else
             cboMode.SelectedIndex = 0
         End If

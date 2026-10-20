@@ -24,6 +24,10 @@ Public Module VHostingSync
     Private Const SBE_PUSH_API As String = "https://vistawin.store/Inven-sbe/vbtoserver-insert/insert_api.php"
     Private Const SBE_PULL_API As String = "https://vistawin.store/Inven-sbe/servertovb-recieve/api_data.php"
 
+    ' SuperMarket vertical (semi-online): local SQL Server <-> hosted MySQL.
+    Private Const SM_PUSH_API As String = "https://vistawin.store/super-market/vbtoserver-insert/insert_api.php"
+    Private Const SM_PULL_API As String = "https://vistawin.store/super-market/servertovb-recieve/api_data.php"
+
     Private Const HTTP_TIMEOUT As Integer = 30000
 
     Private Class TimeoutWebClient
@@ -81,6 +85,9 @@ Public Module VHostingSync
             Case "BHAVANIELECSURDB"
                 Return SBE_PULL_API
 
+            Case "SUPERMARKETDB"
+                Return SM_PULL_API
+
             Case Else
                 Throw New Exception("Hosting Server -> VB sync is not configured for database: " & CurrentDatabase())
         End Select
@@ -97,6 +104,9 @@ Public Module VHostingSync
 
             Case "BHAVANIELECSURDB"
                 Return SBE_PUSH_API
+
+            Case "SUPERMARKETDB"
+                Return SM_PUSH_API
 
             Case Else
                 Throw New Exception("VB -> Hosting Server sync is not configured for database: " & CurrentDatabase())
@@ -250,6 +260,16 @@ Public Module VHostingSync
 
             Case "BHAVANIELECSURDB"
                 sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' ORDER BY TABLE_NAME"
+
+            Case "SUPERMARKETDB"
+                ' Semi-online: only the business tables are pushed to the
+                ' hosting server.  Company profile (it holds passwords / SMS
+                ' credentials) and the user list are deliberately excluded.
+                sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' " & _
+                      "AND TABLE_NAME IN ('tbl_BillSeries','tbl_Brand','tbl_Category','tbl_CusProfile'," & _
+                      "'tbl_MultiStock','tbl_PurchDetail','tbl_PurchParticular','tbl_SalDetail'," & _
+                      "'tbl_SalParticular','tbl_StockDtl','tbl_StockModify','tbl_UnitList') " & _
+                      "ORDER BY TABLE_NAME"
 
                 Case Else
                     Throw New Exception("VB -> Hosting Server sync is not configured for database: " & CurrentDatabase())
@@ -459,11 +479,12 @@ Public Module VHostingSync
                 End If
 
                 Dim targetColumns As List(Of String) = GetLocalTableColumns(conn, tran, tableName)
+                Dim identityColumns As List(Of String) = GetLocalIdentityColumns(conn, tran, tableName)
                 Dim commonColumns As New List(Of String)()
 
                 For Each col As DataColumn In dt.Columns
                     Dim targetCol As String = FindText(targetColumns, col.ColumnName)
-                    If targetCol.Length > 0 Then commonColumns.Add(targetCol)
+                    If targetCol.Length > 0 AndAlso Not ContainsText(identityColumns, targetCol) Then commonColumns.Add(targetCol)
                 Next
 
                 If commonColumns.Count = 0 Then
@@ -551,6 +572,30 @@ Public Module VHostingSync
         Return cols
     End Function
 
+    ''' <summary>
+    ''' Columns that SQL Server fills in itself.  They must not be part of the
+    ''' INSERT used by Server->VB, otherwise the pull fails with
+    ''' "Cannot insert explicit value for identity column" (SQL error 544).
+    ''' </summary>
+    Private Function GetLocalIdentityColumns(ByVal conn As SqlConnection, ByVal tran As SqlTransaction, _
+                                             ByVal tableName As String) As List(Of String)
+        Dim cols As New List(Of String)()
+        Dim sql As String = "SELECT c.name FROM sys.columns c INNER JOIN sys.tables t ON t.object_id = c.object_id " & _
+                            "WHERE t.name = @TableName AND c.is_identity = 1"
+
+        Using cmd As New SqlCommand(sql, conn, tran)
+            cmd.Parameters.AddWithValue("@TableName", tableName)
+
+            Using rdr As SqlDataReader = cmd.ExecuteReader()
+                While rdr.Read()
+                    cols.Add(Convert.ToString(rdr(0)))
+                End While
+            End Using
+        End Using
+
+        Return cols
+    End Function
+
     Private Function LocalRowExists(ByVal conn As SqlConnection, ByVal tran As SqlTransaction, _
                                     ByVal tableName As String, ByVal keyColumn As String, _
                                     ByVal keyValue As String) As Boolean
@@ -610,6 +655,26 @@ Public Module VHostingSync
                 Return "Sa_invNo_vc"
             Case "tbl_stock"
                 Return "Stock_Code_n"
+            Case "tbl_category"
+                Return "Category_Code_n"
+            Case "tbl_brand"
+                Return "Brand_Code_n"
+            Case "tbl_unitlist"
+                Return "U_EName_vc"
+            Case "tbl_cusprofile"
+                Return "C_AllID_n"
+            Case "tbl_saldetail"
+                Return "Sa_InvNo_vc"
+            Case "tbl_salparticular"
+                Return "Sa_InvNo_vc"
+            Case "tbl_purchdetail"
+                Return "Sa_InvNo_vc"
+            Case "tbl_purchparticular"
+                Return "Sa_InvNo_vc"
+            Case "tbl_billseries"
+                Return "B_BillType_vc"
+            Case "tbl_stockmodify"
+                Return "St_InvNo_vc"
             Case Else
                 Return ""
         End Select
