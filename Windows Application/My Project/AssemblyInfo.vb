@@ -8,10 +8,10 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("WindowsApplication")> 
-<Assembly: AssemblyDescription("")> 
-<Assembly: AssemblyCompany("")> 
-<Assembly: AssemblyProduct("WindowsApplication")> 
+<Assembly: AssemblyTitle("Bharath SuperMarket")> 
+<Assembly: AssemblyDescription("Bharath SuperMarket - point of sale and inventory")> 
+<Assembly: AssemblyCompany("Bharath SuperMarket")> 
+<Assembly: AssemblyProduct("Bharath SuperMarket")> 
 <Assembly: AssemblyCopyright("Copyright ©  2026")> 
 <Assembly: AssemblyTrademark("")> 
 

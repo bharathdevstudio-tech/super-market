@@ -46,3 +46,12 @@ $RECYCLE.BIN/
 #  source before publishing.  See LOCAL_SECRETS.txt.
 LOCAL_SECRETS*
 *.local.txt
+
+# ---- Cloudflare Worker -------------------------------------------------
+node_modules/
+.wrangler/
+.dev.vars
+.env
+.env.*
+!.env.example
+*.local

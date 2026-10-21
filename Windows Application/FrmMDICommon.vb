@@ -285,7 +285,7 @@ Public Class FrmMDICommon
             Exit Sub
         End If
 
-        Dim FrmType As Type = Application.OpenForms(0).GetType().Assembly.GetType(Application.ProductName & "." & FormName)
+        Dim FrmType As Type = Application.OpenForms(0).GetType().Assembly.GetType(GetType(FrmMDICommon).Namespace & "." & FormName)
 
         If FrmType Is Nothing Then
             MsgBox("Form Not Found : " & FormName)

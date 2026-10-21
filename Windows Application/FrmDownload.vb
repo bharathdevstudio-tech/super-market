@@ -76,7 +76,7 @@ Public Class FrmDownload
         Directory.CreateDirectory("" & VistawinFunctions.ScanningPath & "\Cus_Bill")
         Directory.CreateDirectory("" & VistawinFunctions.ScanningPath & "\Cus_Image")
         Directory.CreateDirectory("" & VistawinFunctions.ScanningPath & "\Exp_Image")
-        MessageBox.Show("Folder creation completed.", "VISTAWIN", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        MessageBox.Show("Folder creation completed.", "Bharath SuperMarket", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
     End Sub
 

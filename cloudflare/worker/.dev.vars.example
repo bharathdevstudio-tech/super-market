@@ -1,0 +1,16 @@
+# Local development secrets for `wrangler dev`.
+#
+# Copy this file to `.dev.vars` (which is git-ignored) and fill in real values.
+# Never commit `.dev.vars`.
+#
+# In production these are set with:
+#   npx wrangler secret put TOKEN_SECRET
+#
+# Generate a secret locally, e.g.:
+#   node -e "console.log(crypto.randomBytes(32).toString('base64'))"
+
+# Signing key for API tokens (HMAC-SHA256). Rotating it logs everyone out.
+TOKEN_SECRET=replace-me-with-a-long-random-value
+
+# Optional overrides (defaults live in wrangler.toml [vars])
+# TOKEN_TTL_SECONDS=28800

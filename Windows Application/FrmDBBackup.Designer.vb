@@ -84,7 +84,7 @@ Partial Class FrmDBBackup
         Me.btnVistawinBackup.Name = "btnVistawinBackup"
         Me.btnVistawinBackup.Size = New System.Drawing.Size(225, 31)
         Me.btnVistawinBackup.TabIndex = 2
-        Me.btnVistawinBackup.Text = "Send to Vistawin Server"
+        Me.btnVistawinBackup.Text = "Backup / Upload"
         Me.btnVistawinBackup.UseVisualStyleBackColor = False
         '
         'lblStatus

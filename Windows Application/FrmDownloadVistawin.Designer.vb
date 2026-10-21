@@ -50,7 +50,7 @@ Partial Class FrmDownloadVistawin
         Me.lblTitle.Dock = System.Windows.Forms.DockStyle.Fill
         Me.lblTitle.ForeColor = System.Drawing.Color.White
         Me.lblTitle.Font = New System.Drawing.Font("Segoe UI", 13.0!, System.Drawing.FontStyle.Bold)
-        Me.lblTitle.Text = "  Hostinger File Manager  —  vistawin.store"
+        Me.lblTitle.Text = "  Hostinger File Manager  —  Bharath SuperMarket"
         Me.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
 
         ' ── pnlPath (breadcrumb bar) ──────────────────────────────────────

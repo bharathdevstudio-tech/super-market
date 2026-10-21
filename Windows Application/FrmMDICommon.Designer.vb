@@ -135,7 +135,7 @@ Partial Class FrmMDICommon
         Me.ToolStripStatusLabel3.Name = "ToolStripStatusLabel3"
         Me.ToolStripStatusLabel3.Size = New System.Drawing.Size(337, 21)
         Me.ToolStripStatusLabel3.Spring = True
-        Me.ToolStripStatusLabel3.Text = "Website : vistawin.online"
+        Me.ToolStripStatusLabel3.Text = "Bharath SuperMarket"
         '
         'ToolStripStatusLabel4
         '

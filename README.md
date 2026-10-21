@@ -1,7 +1,34 @@
-# VISTAWIN — SuperMarket App
+# Bharath SuperMarket
 
-A legacy **VB.NET / Windows Forms** supermarket point-of-sale and inventory
-application (Visual Studio 2010, .NET Framework 3.5) backed by **SQL Server**.
+A **VB.NET / Windows Forms** supermarket point-of-sale and inventory
+application (Visual Studio 2010, .NET Framework 3.5).
+
+> **Migration in progress.** The desktop application still reads and writes
+> **SQL Server** directly. A Cloudflare Workers + D1 backend is being added
+> alongside it (see `cloudflare/`), and the forms will be moved onto that API
+> one at a time. Until that migration is finished the SQL Server database
+> remains the system of record. Do not point the desktop app at the Worker —
+> D1 is not a SQL Server endpoint.
+
+## Cloud backend (Bharath SuperMarket API)
+
+| Path | Contents |
+|---|---|
+| `cloudflare/d1/migrations/` | Versioned D1 (SQLite) schema |
+| `cloudflare/worker/` | Cloudflare Worker API (JavaScript, D1 binding) |
+| `cloudflare/tests/` | Schema and API tests (run locally with Node) |
+| `docs/` | Source inventory, database migration map, plan, checklist |
+
+Target architecture:
+
+```
+Bharath SuperMarket Windows app  ->  HTTPS  ->  Cloudflare Worker  ->  D1
+```
+
+Full-online operation requires an internet connection. Offline billing is **not**
+supported by the API path yet; the SQL Server path still works offline. No
+offline queue/sync has been built, so do not describe the cloud mode as
+offline-capable.
 
 ## Repository layout
 
@@ -42,7 +69,7 @@ into `Windows Application\bin\Debug\` before building.
 MSBuild.exe "Windows Application\Windows Application.vbproj" /p:Configuration=Debug /t:Build
 ```
 
-Output: `Windows Application\bin\Debug\VISTAWIN.exe`
+Output: `Windows Application\bin\Debug\BharathSuperMarket.exe`
 
 ## Database setup
 
@@ -75,9 +102,11 @@ source contains placeholders that you set after cloning:
 | `YOUR_API_KEY` | optional cloud-backup key | `FrmDBBackup.vb` |
 | `YOUR_GOOGLE_APPS_SCRIPT_URL` | optional backup webhook | `FrmDBBackup.vb` |
 
-Some optional maintenance features also contact the vendor's own
+Some optional maintenance features also contact the previous vendor's own
 `vistawin.store` endpoints (application update, SQL helper, backup upload).
-Remove or replace those URLs if you do not want the application to use them.
+Those are **third-party services that this shop does not control** and the
+backup upload would send database contents off-site. Replace or disable them
+before production use; see `docs/05-branding-and-risks.md`.
 
 ## Semi-online sync
 

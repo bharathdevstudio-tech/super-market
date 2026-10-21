@@ -10,7 +10,7 @@
     <OutputType>WinExe</OutputType>
     <StartupObject>WindowsApplication.My.MyApplication</StartupObject>
     <RootNamespace>WindowsApplication</RootNamespace>
-    <AssemblyName>VISTAWIN</AssemblyName>
+    <AssemblyName>BharathSuperMarket</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>

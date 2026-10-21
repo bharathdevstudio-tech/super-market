@@ -1168,7 +1168,7 @@ Public Class FrmMDILeftMenu
 
         Dim FrmType As Type =
             Application.OpenForms(0).GetType().Assembly.GetType(
-            Application.ProductName & "." & FormName)
+            GetType(FrmMDILeftMenu).Namespace & "." & FormName)
 
         If FrmType Is Nothing Then
 
@@ -1289,7 +1289,7 @@ Public Class FrmMDILeftMenu
             End If
 
         Catch ex As Exception
-            MessageBox.Show("Unable to create VISTAWIN folders." & vbCrLf & ex.Message, "Folder Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Unable to create the application data folders." & vbCrLf & ex.Message, "Folder Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
 
     End Sub

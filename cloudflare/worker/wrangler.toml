@@ -1,0 +1,20 @@
+name = "bharath-supermarket-api"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+
+# Free plan. Replace database_id after running:
+#   wrangler d1 create bharath-supermarket
+[[d1_databases]]
+binding = "DB"
+database_name = "bharath-supermarket"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+migrations_dir = "../d1/migrations"
+
+[vars]
+# Non-secret configuration only. Secrets go through `wrangler secret put`.
+CURRENCY = "INR"
+TIMEZONE = "Asia/Kolkata"
+TOKEN_TTL_SECONDS = "28800"
+
+[observability]
+enabled = true

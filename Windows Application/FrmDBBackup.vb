@@ -90,7 +90,7 @@ Public Class FrmDBBackup
         If worker.IsBusy Then
             _cancelled = True
             worker.CancelAsync()
-            btnVistawinBackup.Text = "Send to Vistawin Server"
+            btnVistawinBackup.Text = "Backup / Upload"
             lblStatus.Text = "Cancelling..."
             btnVistawinBackup.Enabled = False
             Return

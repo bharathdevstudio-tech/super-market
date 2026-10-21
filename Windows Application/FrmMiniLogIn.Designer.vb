@@ -270,7 +270,7 @@ Partial Class FrmMiniLogIn
         Me.Name = "FrmMiniLogIn"
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "Log In"
+        Me.Text = "Bharath SuperMarket - Log In"
         Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         Me.Panel2.ResumeLayout(False)
         Me.Panel2.PerformLayout()
