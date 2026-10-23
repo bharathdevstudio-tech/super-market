@@ -49,35 +49,46 @@ Output: `Windows Application\bin\Debug\BharathSuperMarket.exe`
 
 ---
 
-## Part 2 — Deploy to Cloudflare (not done yet)
+## Part 2 — Deploy to Cloudflare
 
-Free-plan Worker + D1. Steps are standard Wrangler 3.
+Free-plan Worker + D1, Wrangler 3 or 4.
 
-### 1. Install and log in
+**All Wrangler commands run from the repository root.** The only
+`wrangler.toml` is `E:\Bharath\SuperMarket App\wrangler.toml`; it points
+`main` at `cloudflare/worker/src/index.js` and `migrations_dir` at
+`cloudflare/d1/migrations`. A second config file must not be added — a stale
+`database_id` in a duplicate silently deploys the API against the wrong
+database.
+
+### 0. Run Wrangler
 
 ```powershell
-cd "E:\Bharath\SuperMarket App\cloudflare\worker"
-npm install
-npx wrangler login
+cd "E:\Bharath\SuperMarket App"
+npx wrangler login          # once per machine
+npx wrangler whoami         # confirm the account
 ```
 
-### 2. Create the database
+`cloudflare/worker/package.json` scripts (`npm run deploy`, `npm run dev`,
+`npm run db:migrate:remote`) pass `--config ../../wrangler.toml`, so they work
+from `cloudflare/worker` too. They are optional.
+
+### 1. Create the database
 
 ```powershell
 npx wrangler d1 create bharath-supermarket
 ```
 
-Copy the returned `database_id` into `wrangler.toml`, replacing
-`REPLACE_WITH_D1_DATABASE_ID`. It is not a secret, but it is account-specific,
-so it is not committed for you.
+Copy the returned `database_id` into the single root `wrangler.toml`
+(`[[d1_databases]] database_id`). It is not a secret, but it is
+account-specific. Wrangler prints it under `d1_databases[0].database_id`.
 
-### 3. Apply the migrations
+### 2. Apply the migrations
 
 ```powershell
 npx wrangler d1 migrations apply bharath-supermarket --remote
 ```
 
-### 4. Set the token secret
+### 3. Set the token secret
 
 ```powershell
 npx wrangler secret put TOKEN_SECRET
@@ -93,7 +104,7 @@ Paste a long random value **at the prompt** (do not put it in a file):
 `TOKEN_SECRET` is never in the repo. Changing it invalidates every issued token,
 which forcibly logs everyone out — that is the intended revocation mechanism.
 
-### 5. Create the first admin user
+### 4. Create the first admin user
 
 There is no self-registration. Insert the first user with a hash generated
 locally (never send a password through chat):
@@ -112,13 +123,35 @@ npx wrangler d1 execute bharath-supermarket --remote --command `
 
 Every later user can be created through `POST /api/users` as admin.
 
-### 6. Deploy
+### 5. Deploy
 
 ```powershell
+cd "E:\Bharath\SuperMarket App"
+npx wrangler deploy --dry-run    # bundles, prints bindings, deploys nothing
 npx wrangler deploy
 ```
 
-### 7. Smoke test
+Expected dry-run tail:
+
+```text
+Total Upload: ... KiB / gzip: ... KiB
+env.DB (bharath-supermarket)   D1 Database
+--dry-run: exiting now.
+```
+
+Cloudflare Workers Builds runs `npx wrangler deploy` with the **repository
+root** as the working directory. That is why the root `wrangler.toml` exists:
+with no config in that directory Wrangler 4 falls back to static-assets
+detection and fails with
+
+```text
+✘ [ERROR] Could not detect a directory containing static files (e.g. html, css and js) for the project
+```
+
+If that error comes back, the root `wrangler.toml` is missing from the commit
+being built, or the project's root directory was changed in the dashboard.
+
+### 6. Smoke test
 
 ```powershell
 curl https://<your-worker>.workers.dev/api/health
@@ -127,7 +160,7 @@ curl https://<your-worker>.workers.dev/api/health
 
 If `ok` is false, the D1 binding or the migrations are wrong. Do not proceed.
 
-### 8. Import the shop data
+### 7. Import the shop data
 
 ```powershell
 cd "E:\Bharath\SuperMarket App"

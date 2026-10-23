@@ -1,0 +1,38 @@
+# ---------------------------------------------------------------------------
+# Canonical Wrangler configuration - deploy from the REPOSITORY ROOT.
+#
+#   npx wrangler deploy              # bundle + deploy
+#   npx wrangler deploy --dry-run    # validate without deploying
+#   npx wrangler dev                 # local dev (reads ./.dev.vars)
+#   npx wrangler d1 migrations apply bharath-supermarket --remote
+#
+# Why the config lives here: Cloudflare Workers Builds runs the deploy command
+# from the repository root.  Without a wrangler.toml in that directory Wrangler
+# falls back to the "static assets" (Pages) detection and fails with
+#   "Could not detect a directory containing static files".
+#
+# This file is the SINGLE source of truth for the Worker name and the D1
+# binding.  Do not add a second wrangler.toml - a stale database_id in a
+# duplicate config silently deploys the API against the wrong database.
+#
+# Secrets are NOT here.  Set them with `npx wrangler secret put TOKEN_SECRET`.
+# Local development secrets go in ./.dev.vars (git-ignored).
+# ---------------------------------------------------------------------------
+name = "bharath-supermarket-api"
+main = "cloudflare/worker/src/index.js"
+compatibility_date = "2024-11-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bharath-supermarket"
+database_id = "ed36a9c0-d2e8-497a-8524-9777e66066af"
+migrations_dir = "cloudflare/d1/migrations"
+
+[vars]
+# Non-secret configuration only.
+CURRENCY = "INR"
+TIMEZONE = "Asia/Kolkata"
+TOKEN_TTL_SECONDS = "28800"
+
+[observability]
+enabled = true

@@ -5,10 +5,10 @@
   "type": "module",
   "description": "Cloudflare Worker API for Bharath SuperMarket (D1 backend).",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
-    "db:migrate:local": "wrangler d1 migrations apply bharath-supermarket --local",
-    "db:migrate:remote": "wrangler d1 migrations apply bharath-supermarket --remote",
+    "dev": "wrangler dev --config ../../wrangler.toml",
+    "deploy": "wrangler deploy --config ../../wrangler.toml",
+    "db:migrate:local": "wrangler d1 migrations apply bharath-supermarket --local --config ../../wrangler.toml",
+    "db:migrate:remote": "wrangler d1 migrations apply bharath-supermarket --remote --config ../../wrangler.toml",
     "test": "node ../tests/api.test.mjs"
   },
   "devDependencies": {
