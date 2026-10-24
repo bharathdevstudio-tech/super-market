@@ -1,0 +1,10 @@
+const { execSync } = require('child_process');
+const fs = require('fs');
+const head = execSync('git show HEAD:"Windows Application/FrmDBBackup.vb"', { encoding: 'buffer' }).toString('latin1');
+const work = fs.readFileSync('Windows Application/FrmDBBackup.vb', 'latin1');
+const hl = head.split(/\r?\n/);
+const wl = work.split(/\r?\n/);
+const h = hl[42];
+const w = wl[41];
+console.log('H:', h.replace(/".*"/, '""'));
+console.log('W:', w.replace(/".*"/, '""'));
