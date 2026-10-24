@@ -467,6 +467,7 @@ Public Class FrmSmPurchase
             mrpTotal += DecOf(r.Cells("MRP").Value) * DecOf(r.Cells("Qty").Value)
         Next
 
+        SmSyncQueue.EnsurePrepared()   ' probe once, outside the transaction
         Trans = VistawinFunctions.ServerConnection.BeginTransaction()
         Try
             Dim bn As VSuperMarket.BillNumber = VSuperMarket.NextBillNumber(Trans, bt, "tbl_PurchDetail")
@@ -485,6 +486,9 @@ Public Class FrmSmPurchase
             For Each r As DataGridViewRow In DgvPurchase.Rows
                 SaveLine(Trans, bt, bn.InvoiceNo, supId, r, isReturn)
             Next
+
+            ' queue the cloud replication event in the SAME transaction
+            SmSyncQueue.EnqueuePurchase(Trans, bt, bn.InvoiceNo, "INSERT")
 
             Trans.Commit()
             SavedBill = True

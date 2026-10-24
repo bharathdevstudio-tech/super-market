@@ -916,6 +916,7 @@ Public Class FrmSmPosBilling
     Private Sub DeleteBill(ByVal invNo As String, ByVal bt As String)
         If invNo = "" Then Exit Sub
         Dim isReturn As Boolean = String.Equals(bt, "SALES RETURN", StringComparison.OrdinalIgnoreCase)
+        SmSyncQueue.EnsurePrepared()   ' probe once, outside the transaction
         Trans = VistawinFunctions.ServerConnection.BeginTransaction
         Try
             Dim lines As List(Of Object()) = ReadBillLines(Trans, invNo)
@@ -926,6 +927,11 @@ Public Class FrmSmPosBilling
                 ApplyStockDelta(Trans, stNo, code, If(isReturn, -tqty, tqty))
                 WriteStockAudit(Trans, invNo, bt, "BILL DELETE", code, Convert.ToString(l(3)), 0, 0, tqty)
             Next
+
+            ' queue the cloud event while the header row still exists, inside the
+            ' same transaction: if the delete fails the event is rolled back too
+            SmSyncQueue.EnqueueSaleDeleted(Trans, bt, invNo)
+
             Using cmd As New SqlCommand("DELETE FROM tbl_SalParticular WHERE Sa_InvNo_vc = @I", VistawinFunctions.ServerConnection, Trans)
                 cmd.Parameters.AddWithValue("@I", invNo)
                 cmd.ExecuteNonQuery()
@@ -989,6 +995,7 @@ Public Class FrmSmPosBilling
             mrpTotal += DecOf(r.Cells("MRP").Value) * DecOf(r.Cells("Qty").Value)
         Next
 
+        SmSyncQueue.EnsurePrepared()   ' probe once, outside the transaction
         Trans = VistawinFunctions.ServerConnection.BeginTransaction
         Try
             Dim invNo As String
@@ -1049,6 +1056,10 @@ Public Class FrmSmPosBilling
             For Each r As DataGridViewRow In DgvBilling.Rows
                 SaveLine(Trans, bt, invNo, custId, r, isReturn, modifyType)
             Next
+
+            ' queue the cloud replication event in the SAME transaction, after the
+            ' bill and its stock lines are written. No billing logic is touched.
+            SmSyncQueue.EnqueueSale(Trans, bt, invNo, If(editing, "UPDATE", "INSERT"))
 
             Trans.Commit()
             SavedBill = True

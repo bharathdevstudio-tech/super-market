@@ -484,6 +484,7 @@
     
     
     <Compile Include="SuperMarket\VSuperMarket.vb" />
+    <Compile Include="SuperMarket\SmSyncQueue.vb" />
     <Compile Include="SuperMarket\FrmSmItem.Designer.vb">
       <DependentUpon>FrmSmItem.vb</DependentUpon>
     </Compile>
