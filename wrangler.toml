@@ -18,14 +18,14 @@
 # Secrets are NOT here.  Set them with `npx wrangler secret put TOKEN_SECRET`.
 # Local development secrets go in ./.dev.vars (git-ignored).
 # ---------------------------------------------------------------------------
-name = "bharath-supermarket-api"
+name = "super-market"
 main = "cloudflare/worker/src/index.js"
 compatibility_date = "2024-11-01"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "bharath-supermarket"
-database_id = "ed36a9c0-d2e8-497a-8524-9777e66066af"
+database_id = "39048666-f3d2-453e-affa-4fad227c406b"
 migrations_dir = "cloudflare/d1/migrations"
 
 [vars]
